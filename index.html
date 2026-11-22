@@ -148,10 +148,36 @@
       loadObservations();
     }
 
-    function getTime(item) {
-      if (typeof item === "string") return item;
-      return item.time || item.passingTime || item.trainTime || item.timestamp || "Time not available";
+    
+function getTime(item) {
+  let value;
+
+  if (typeof item === "string") {
+    value = item;
+  } else {
+    value = item.time || item.passingTime ||
+            item.trainTime || item.timestamp ||
+            "Time not available";
+  }
+
+  // Convert Google Sheets date-time values into Indian time.
+  if (typeof value === "string" &&
+      /^\d{4}-\d{2}-\d{2}T/.test(value)) {
+    const date = new Date(value);
+
+    if (!isNaN(date.getTime())) {
+      return new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Kolkata",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).format(date);
     }
+  }
+
+  return String(value);
+}
+
 
     function getLabel(item) {
       if (typeof item === "string") return "";
