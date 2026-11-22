@@ -1,0 +1,24 @@
+
+{
+  "name": "Sakhigopal Crossing Assistant",
+  "short_name": "Crossing Assistant",
+  "description": "Train observations and railway crossing awareness for Sakhigopal.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f2f5f8",
+  "theme_color": "#123b5d",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
