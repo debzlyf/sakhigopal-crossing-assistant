@@ -7,380 +7,862 @@
   <meta name="theme-color" content="#123b5d">
   <title>Sakhigopal Crossing Assistant</title>
   <link rel="manifest" href="./manifest.json">
+
   <style>
     * { box-sizing: border-box; }
+
     body {
-      margin: 0; background: #f2f5f8; color: #172b3a;
+      margin: 0;
+      background: #f2f5f8;
+      color: #172b3a;
       font-family: Arial, sans-serif;
     }
+
     header {
-      background: #123b5d; color: white; padding: 22px 18px;
+      background: #123b5d;
+      color: white;
+      padding: 22px 18px;
     }
+
     header h1 { margin: 0 0 6px; font-size: 22px; }
     header p { margin: 0; color: #d7e6f2; font-size: 13px; }
+
     main { max-width: 650px; margin: auto; padding: 16px; }
+
     .card {
-      background: white; border-radius: 14px; padding: 17px;
-      margin-bottom: 15px; box-shadow: 0 2px 9px #102a430d;
+      background: white;
+      border-radius: 14px;
+      padding: 17px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 9px #102a430d;
     }
+
     h2 { font-size: 17px; margin: 0 0 13px; }
+
     .stats { display: flex; gap: 12px; }
+
     .stat {
-      flex: 1; background: #edf4f9; border-radius: 10px;
-      padding: 13px; min-width: 0;
+      flex: 1;
+      background: #edf4f9;
+      border-radius: 10px;
+      padding: 13px;
+      min-width: 0;
     }
-    .stat strong { display: block; font-size: 25px; color: #123b5d; }
+
+    .stat strong {
+      display: block;
+      font-size: 25px;
+      color: #123b5d;
+    }
+
     .stat span { font-size: 12px; color: #526575; }
-    label { display: block; font-size: 13px; font-weight: bold; margin: 12px 0 6px; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin: 12px 0 6px;
+    }
+
     input {
-      width: 100%; padding: 12px; border: 1px solid #cbd5df;
-      border-radius: 8px; font-size: 16px; background: white;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5df;
+      border-radius: 8px;
+      font-size: 16px;
+      background: white;
     }
+
     button {
-      border: 0; border-radius: 9px; padding: 12px 16px;
-      font-size: 14px; font-weight: bold; cursor: pointer;
+      border: 0;
+      border-radius: 9px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
     }
-    .primary { background: #1769aa; color: white; width: 100%; margin-top: 14px; }
+
+    .primary {
+      background: #1769aa;
+      color: white;
+      width: 100%;
+      margin-top: 14px;
+    }
+
     .secondary { background: #e8f0f6; color: #123b5d; }
-    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .toolbar button { white-space: nowrap; }
-    .muted { color: #667887; font-size: 12px; line-height: 1.5; }
-    #status { margin-top: 10px; font-size: 13px; line-height: 1.5; }
-    .observation {
-      display: flex; justify-content: space-between; gap: 12px;
-      padding: 11px 0; border-bottom: 1px solid #edf0f2;
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
+
+    .toolbar button { white-space: nowrap; }
+
+    .muted {
+      color: #667887;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    #status { margin-top: 10px; font-size: 13px; line-height: 1.5; }
+
+    .observation {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid #edf0f2;
+    }
+
     .observation:last-child { border-bottom: 0; }
     .observation strong { color: #123b5d; }
-    .observation small { display: block; color: #667887; margin-top: 3px; }
+
+    .observation small {
+      display: block;
+      color: #667887;
+      margin-top: 3px;
+    }
+
     .empty { color: #667887; font-size: 13px; padding: 12px 0; }
-    footer { text-align: center; color: #73818d; font-size: 11px; padding: 10px 15px 25px; }
-    .warning { background: #fff7e6; border-radius: 8px; padding: 10px; color: #76520a; }
+
+    footer {
+      text-align: center;
+      color: #73818d;
+      font-size: 11px;
+      padding: 10px 15px 25px;
+    }
+
+    .journey-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .journey-result {
+      background: #edf4f9;
+      border-radius: 10px;
+      padding: 13px;
+      margin-top: 12px;
+    }
+
+    .journey-result strong {
+      display: block;
+      color: #123b5d;
+      font-size: 22px;
+      margin-top: 4px;
+    }
+
+    .journey-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .journey-actions button { flex: 1; }
+
+    .field-help {
+      color: #667887;
+      font-size: 11px;
+      line-height: 1.4;
+      margin-top: 5px;
+    }
+
+    .warning {
+      background: #fff7e6;
+      border-radius: 8px;
+      padding: 10px;
+      color: #76520a;
+    }
+
+    @media (max-width: 420px) {
+      .journey-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
+
 <body>
-  <header>
-    <h1>🚆 Sakhigopal Crossing Assistant</h1>
-    <p>Train observations and crossing-risk awareness</p>
-  </header>
 
-  <main>
-    <section class="card">
-      <div class="toolbar">
-        <h2>Crossing dashboard</h2>
-        <button class="secondary" onclick="loadObservations()">↻ Refresh</button>
+<header>
+  <h1>🚆 Sakhigopal Crossing Assistant</h1>
+  <p>Train observations and crossing-risk awareness</p>
+</header>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section class="card">
+    <div class="toolbar">
+      <h2>Crossing dashboard</h2>
+      <button class="secondary" onclick="loadObservations()">↻ Refresh</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <strong id="totalCount">—</strong>
+        <span>Observations loaded</span>
       </div>
-      <div class="stats">
-        <div class="stat">
-          <strong id="totalCount">—</strong>
-          <span>Observations loaded</span>
-        </div>
-        <div class="stat">
-          <strong id="latestTime">—</strong>
-          <span>Latest recorded time</span>
-        </div>
+
+      <div class="stat">
+        <strong id="latestTime">—</strong>
+        <span>Latest recorded time</span>
       </div>
-      <div id="status" class="muted">Enter your API token below to connect.</div>
-    </section>
-    
-<section class="card">
-  <h2>🚆 Next train estimate</h2>
-  <div class="stat">
-    <strong id="nextTrainTime">Calculating…</strong>
-    <span id="nextTrainDay">Based on historical observations</span>
-  </div>
-  <p id="predictionMessage" class="muted">
-    Analysing recorded train passing times…
-  </p>
-  <div class="stat">
-    <strong id="busyWindowCount">—</strong>
-    <span>Historical observations within 30 minutes of this time</span>
-  </div>
-  <p class="muted">
-    This is a historical reference, not a live train location or gate-status feed.
-  </p>
-</section>
-    
+    </div>
 
-    <section class="card">
-      <h2>Connect to your Google Sheet</h2>
-      <label for="token">Private API token</label>
-      <input id="token" type="password" placeholder="Paste your Apps Script API token">
-      <button class="primary" onclick="saveTokenAndLoad()">Save on this phone and connect</button>
-      <p class="muted">Your token is saved in this browser on this device. Do not put it in GitHub or share it with anyone.</p>
-    </section>
+    <div id="status" class="muted">
+      Enter your API token below to connect.
+    </div>
+  </section>
 
-    <section class="card">
-      <h2>➕ Add train observation</h2>
-      <form id="addForm">
-        <label for="trainTime">Train passing time</label>
-        <input id="trainTime" type="time" required>
-        <label for="trainLabel">Train / observation label (optional)</label>
-        <input id="trainLabel" type="text" placeholder="e.g. Vande Bharat, Engine">
-        <label for="trainNotes">Notes (optional)</label>
-        <input id="trainNotes" type="text" placeholder="Any useful details">
-        <button class="primary" type="submit">Add observation</button>
-      </form>
-      <div id="addStatus" class="muted"></div>
-    </section>
+  <!-- NEXT TRAIN -->
+  <section class="card">
+    <h2>🚆 Next train estimate</h2>
 
-    <section class="card">
-      <h2>Recent train observations</h2>
-      <div id="observations">
-        <div class="empty">Connect to your Google Sheet to load observations.</div>
+    <div class="stat">
+      <strong id="nextTrainTime">Calculating…</strong>
+      <span id="nextTrainDay">Based on historical observations</span>
+    </div>
+
+    <p id="predictionMessage" class="muted">
+      Analysing recorded train passing times…
+    </p>
+
+    <div class="stat">
+      <strong id="busyWindowCount">—</strong>
+      <span>Historical observations within 30 minutes of this time</span>
+    </div>
+
+    <p class="muted">
+      This is a historical reference, not a live train location or gate-status feed.
+    </p>
+  </section>
+
+  <!-- JOURNEY PLANNER -->
+  <section class="card" id="journeyPlanner">
+    <h2>🧭 Can I leave now?</h2>
+
+    <p class="muted">
+      Plan your arrival at Sakhigopal railway crossing and compare it with recorded train passing times.
+    </p>
+
+    <label for="journeyDeparture">Departure time</label>
+    <input id="journeyDeparture" type="datetime-local">
+
+    <p class="field-help">
+      Defaults to your phone's current local time. You can choose a later departure.
+    </p>
+
+    <div class="journey-grid">
+      <div>
+        <label for="travelMinutes">Travel duration (minutes)</label>
+        <input
+          id="travelMinutes"
+          type="number"
+          min="1"
+          max="300"
+          value="10"
+          inputmode="numeric">
       </div>
-    </section>
 
-    <section class="card">
-      <div class="warning">
-        <strong>Important:</strong> These are estimates based on recorded train passing times.
-        They do not show whether the railway gate is physically open or closed. Always check
-        the crossing and traffic before moving.
+      <div>
+        <label for="journeyArrival">Estimated arrival</label>
+        <input
+          id="journeyArrival"
+          type="text"
+          readonly
+          placeholder="Calculated automatically">
       </div>
-    </section>
-  </main>
+    </div>
 
-  <footer>Sakhigopal Crossing Assistant · First version</footer>
+    <div class="journey-actions">
+      <button
+        class="secondary"
+        type="button"
+        onclick="estimateGpsRoute()">
+        Use GPS route estimate
+      </button>
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbz7rP4IhhZ9FNqzT3FmzV6njJ6JKJ8-Xn6yiY8LGg6zSYi-us0hjTfC9LH0pOEPYraL/exec";
+      <button
+        class="secondary"
+        type="button"
+        onclick="useCurrentDeparture()">
+        Depart now
+      </button>
+    </div>
 
-    let observations = [];
+    <div id="gpsStatus" class="muted" aria-live="polite">
+      GPS is optional. You can enter travel duration manually.
+    </div>
 
-    function getToken() {
-      return localStorage.getItem("sakhigopal_api_token") || "";
-    }
+    <div class="journey-result">
+      <span class="muted">
+        Train observations near your estimated arrival
+      </span>
 
-    function setStatus(message, isError = false) {
-      const el = document.getElementById("status");
-      el.textContent = message;
-      el.style.color = isError ? "#b42318" : "#526575";
-    }
+      <strong id="arrivalRisk">Waiting for calculation</strong>
 
-    function saveTokenAndLoad() {
-      const token = document.getElementById("token").value.trim();
-      if (!token) {
-        setStatus("Please enter your API token.", true);
-        return;
-      }
-      localStorage.setItem("sakhigopal_api_token", token);
-      loadObservations();
-    }
+      <div id="arrivalTrainDetails" class="muted">
+        Connect to your observations to compare historical passing times.
+      </div>
+    </div>
 
-    
-function getTime(item) {
-  let value;
+    <p class="warning muted">
+      This comparison uses recorded historical times only.
+      It is not live train tracking, a gate-status feed, or a safety clearance.
+      Always obey railway signals and barriers.
+    </p>
 
-  if (typeof item === "string") {
-    value = item;
-  } else {
-    value = item.time || item.passingTime ||
-            item.trainTime || item.timestamp ||
-            "Time not available";
+    <p class="field-help">
+      Destination: Sakhigopal level crossing ·
+      19.946890, 85.816566.
+      GPS route estimates use a public routing demo service and may be unavailable or approximate.
+    </p>
+  </section>
+
+  <!-- GOOGLE SHEETS CONNECTION -->
+  <section class="card">
+    <h2>Connect to your Google Sheet</h2>
+
+    <label for="token">Private API token</label>
+
+    <input
+      id="token"
+      type="password"
+      placeholder="Paste your Apps Script API token">
+
+    <button class="primary" onclick="saveTokenAndLoad()">
+      Save on this phone and connect
+    </button>
+
+    <p class="muted">
+      Your token is saved in this browser on this device.
+      Do not put it in GitHub or share it with anyone.
+    </p>
+  </section>
+
+  <!-- ADD OBSERVATION -->
+  <section class="card">
+    <h2>➕ Add train observation</h2>
+
+    <form id="addForm">
+      <label for="trainTime">Train passing time</label>
+
+      <input id="trainTime" type="time" required>
+
+      <label for="trainNotes">Notes (optional)</label>
+
+      <input
+        id="trainNotes"
+        type="text"
+        placeholder="Any useful details">
+
+      <button class="primary" type="submit">
+        Add observation
+      </button>
+    </form>
+
+    <div id="addStatus" class="muted"></div>
+  </section>
+
+  <!-- RECENT OBSERVATIONS -->
+  <section class="card">
+    <h2>Recent train observations</h2>
+
+    <div id="observations">
+      <div class="empty">
+        Connect to your Google Sheet to load observations.
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="warning">
+      <strong>Important:</strong>
+      These are estimates based on recorded train passing times.
+      They do not show whether the railway gate is physically open or closed.
+      Always check the crossing and traffic before moving.
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Sakhigopal Crossing Assistant · First version
+</footer>
+
+<script>
+
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbz7rP4IhhZ9FNqzT3FmzV6njJ6JKJ8-Xn6yiY8LGg6zSYi-us0hjTfC9LH0pOEPYraL/exec";
+
+  let observations = [];
+
+  // CONFIRMED SAKHIGOPAL CROSSING COORDINATES
+  const CROSSING_LAT = 19.946890;
+  const CROSSING_LON = 85.816566;
+
+  function toLocalDateTimeValue(date) {
+    const pad = n => String(n).padStart(2, "0");
+
+    return date.getFullYear() + "-" +
+      pad(date.getMonth() + 1) + "-" +
+      pad(date.getDate()) + "T" +
+      pad(date.getHours()) + ":" +
+      pad(date.getMinutes());
   }
 
-  // Convert Google Sheets date-time values into Indian time.
-  if (typeof value === "string" &&
-      /^\d{4}-\d{2}-\d{2}T/.test(value)) {
-    const date = new Date(value);
-
-    if (!isNaN(date.getTime())) {
-      return new Intl.DateTimeFormat("en-GB", {
-        timeZone: "Asia/Kolkata",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-      }).format(date);
-    }
+  function formatLocalDateTime(date) {
+    return new Intl.DateTimeFormat("en-IN", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    }).format(date);
   }
 
-  return String(value);
-}
+  function useCurrentDeparture() {
+    document.getElementById("journeyDeparture").value =
+      toLocalDateTimeValue(new Date());
 
+    renderJourneyPrediction();
+  }
 
-    function getLabel(item) {
-      if (typeof item === "string") return "";
-      return item.label || item.train || item.name || "";
+  // JOURNEY ARRIVAL AND HISTORICAL TRAIN COMPARISON
+  function renderJourneyPrediction() {
+
+    const departureInput =
+      document.getElementById("journeyDeparture");
+
+    const durationInput =
+      document.getElementById("travelMinutes");
+
+    const arrivalInput =
+      document.getElementById("journeyArrival");
+
+    const risk =
+      document.getElementById("arrivalRisk");
+
+    const details =
+      document.getElementById("arrivalTrainDetails");
+
+    if (!departureInput || !durationInput || !arrivalInput) return;
+
+    const departure = new Date(departureInput.value);
+    const duration = Number(durationInput.value);
+
+    if (
+      !departureInput.value ||
+      isNaN(departure.getTime()) ||
+      !Number.isFinite(duration) ||
+      duration < 1 ||
+      duration > 300
+    ) {
+      arrivalInput.value = "";
+      risk.textContent = "Check journey details";
+
+      details.textContent =
+        "Enter a valid departure time and travel duration between 1 and 300 minutes.";
+
+      return;
     }
 
-    function getNotes(item) {
-      if (typeof item === "string") return "";
-      return item.notes || "";
-    }
+    const arrival =
+      new Date(departure.getTime() + duration * 60000);
 
-    function sortObservations(list) {
-      return [...list].sort((a, b) => String(getTime(a)).localeCompare(String(getTime(b))));
-    }
+    arrivalInput.value = formatLocalDateTime(arrival);
 
-    async function loadObservations() {
-      const token = getToken();
-      if (!token) {
-        setStatus("Please enter your API token first.", true);
-        return;
-      }
+    const arrivalMinute =
+      arrival.getHours() * 60 + arrival.getMinutes();
 
-      setStatus("Connecting to Google Sheets…");
-      try {
-        const url = API_URL + "?action=list&token=" + encodeURIComponent(token);
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Server returned HTTP " + response.status);
+    const observed = observations.map(item => {
 
-        const data = await response.json();
-        if (!data.success) throw new Error(data.message || "API rejected the request. Check your token.");
+      const match =
+        String(getTime(item)).match(/(\d{1,2}):(\d{2})/);
 
-        observations = sortObservations(data.observations || []);
-        renderObservations();
-        renderPrediction();
-        setStatus("Connected successfully. Data refreshed from Google Sheets.");
-      } catch (error) {
-        setStatus("Connection failed: " + error.message +
-          ". If the browser reports a network/CORS error, we may need to adjust the Apps Script connection.", true);
-      }
-    }
-
-function renderPrediction() {
-  const timeElement = document.getElementById("nextTrainTime");
-  const dayElement = document.getElementById("nextTrainDay");
-  const messageElement = document.getElementById("predictionMessage");
-  const countElement = document.getElementById("busyWindowCount");
-
-  const times = observations
-    .map(item => getTime(item))
-    .map(value => {
-      const match = String(value).match(/(\d{1,2}):(\d{2})/);
       if (!match) return null;
-      const hour = Number(match[1]);
-      const minute = Number(match[2]);
-      if (hour > 23 || minute > 59) return null;
-      return hour * 60 + minute;
-    })
-    .filter(value => value !== null)
-    .sort((a, b) => a - b);
 
-  if (!times.length) {
-    timeElement.textContent = "No data";
-    dayElement.textContent = "Record train observations first";
-    messageElement.textContent = "No usable passing times found.";
-    countElement.textContent = "—";
-    return;
+      const h = Number(match[1]);
+      const m = Number(match[2]);
+
+      if (h > 23 || m > 59) return null;
+
+      return h * 60 + m;
+
+    }).filter(v => v !== null);
+
+    const closeMatches = observed.filter(t => {
+
+      const diff = Math.abs(t - arrivalMinute);
+
+      return Math.min(diff, 1440 - diff) <= 3;
+
+    }).sort((a, b) => a - b);
+
+    const nearby = observed.map(t => {
+
+      let diff = t - arrivalMinute;
+
+      if (diff > 720) diff -= 1440;
+      if (diff < -720) diff += 1440;
+
+      return { time: t, diff };
+
+    }).filter(x => Math.abs(x.diff) <= 30)
+      .sort((a, b) => Math.abs(a.diff) - Math.abs(b.diff));
+
+    if (!observed.length) {
+      risk.textContent = "No observation data";
+
+      details.textContent =
+        "Connect to Google Sheets and load observations first.";
+
+      return;
+    }
+
+    if (closeMatches.length) {
+
+      risk.textContent =
+        "Historical match within ±3 minutes";
+
+      details.textContent =
+        closeMatches.length +
+        " recorded passing time(s) fall within three minutes of your estimated arrival. This is not confirmation of a train today.";
+
+    } else if (nearby.length) {
+
+      risk.textContent = "Nearby historical movements";
+
+      details.textContent =
+        nearby.slice(0, 3).map(x => {
+
+          const hh = String(Math.floor(x.time / 60)).padStart(2, "0");
+          const mm = String(x.time % 60).padStart(2, "0");
+
+          const delta = Math.abs(x.diff);
+
+          return hh + ":" + mm + " (" +
+            (x.diff < 0
+              ? delta + " min before"
+              : delta + " min after") +
+            ")";
+
+        }).join(" · ") +
+        ". Historical comparison only; not a live prediction.";
+
+    } else {
+
+      risk.textContent = "No close historical match";
+
+      details.textContent =
+        "No recorded passing time is within 30 minutes of this arrival time in the available dataset. Missing observations mean this does not guarantee a clear crossing.";
+    }
   }
 
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  // GPS ROUTE ESTIMATE
+  function estimateGpsRoute() {
 
-  const futureTimes = times.filter(time => time > currentMinutes);
-  const nextTime = futureTimes.length ? futureTimes[0] : times[0];
-  const isTomorrow = futureTimes.length === 0;
+    const status = document.getElementById("gpsStatus");
 
-  const hour = Math.floor(nextTime / 60);
-  const minute = nextTime % 60;
-  const formattedTime =
-    String(hour).padStart(2, "0") + ":" +
-    String(minute).padStart(2, "0");
+    if (!navigator.geolocation) {
 
-  const nearbyCount = times.filter(time => {
-    const difference = Math.abs(time - nextTime);
-    return difference <= 30;
-  }).length;
+      status.textContent =
+        "This browser does not support GPS. Enter travel duration manually.";
 
-  timeElement.textContent = formattedTime;
-  dayElement.textContent = isTomorrow
-    ? "Next historical match: tomorrow"
-    : "Next historical match: today";
+      return;
+    }
 
-  countElement.textContent = nearbyCount;
+    status.textContent =
+      "Requesting your location… Please allow location access.";
 
-  if (nearbyCount >= 3) {
-    messageElement.textContent =
-      "Historically busy period: several observations fall within 30 minutes of this time. Allow extra time.";
-  } else {
-    messageElement.textContent =
-      "No dense historical cluster around this time in the available observations.";
+    navigator.geolocation.getCurrentPosition(
+      async position => {
+
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        status.textContent =
+          "Calculating road route to Sakhigopal crossing…";
+
+        try {
+
+          const routeUrl =
+            "https://router.project-osrm.org/route/v1/driving/" +
+            lon + "," + lat + ";" +
+            CROSSING_LON + "," + CROSSING_LAT +
+            "?overview=false&alternatives=false&steps=false";
+
+          const response = await fetch(routeUrl);
+
+          if (!response.ok) {
+            throw new Error("Routing service unavailable");
+          }
+
+          const data = await response.json();
+
+          if (
+            data.code !== "Ok" ||
+            !data.routes ||
+            !data.routes.length
+          ) {
+            throw new Error("No driving route returned");
+          }
+
+          const minutes =
+            Math.max(1, Math.ceil(data.routes[0].duration / 60));
+
+          document.getElementById("travelMinutes").value = minutes;
+
+          renderJourneyPrediction();
+
+          status.textContent =
+            "GPS route estimate: about " + minutes +
+            " minutes. You can adjust this manually. Route estimate may be approximate.";
+
+        } catch (error) {
+
+          status.textContent =
+            "Could not get a route estimate (" +
+            error.message +
+            "). Please enter your travel duration manually.";
+        }
+
+      },
+
+      error => {
+
+        status.textContent =
+          "Location not available (" +
+          error.message +
+          "). Allow location permission or enter travel duration manually.";
+
+      },
+
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 60000
+      }
+    );
   }
-    }
-      
-    function renderObservations() {
-      document.getElementById("totalCount").textContent = observations.length;
 
-      const latest = observations.length
-        ? getTime(observations[observations.length - 1]).toString().slice(0, 5)
-        : "—";
-      document.getElementById("latestTime").textContent = latest;
+  // INITIALISE JOURNEY PLANNER
+  document.addEventListener("DOMContentLoaded", () => {
 
-      const container = document.getElementById("observations");
-      if (!observations.length) {
-        container.innerHTML = '<div class="empty">No observations found.</div>';
-        return;
-      }
+    const departure =
+      document.getElementById("journeyDeparture");
 
-      container.innerHTML = observations.slice().reverse().map(item => {
-        const time = escapeHtml(getTime(item));
-        const label = escapeHtml(getLabel(item));
-        const notes = escapeHtml(getNotes(item));
-        return '<div class="observation"><div><strong>' + time +
-          '</strong><small>' + (label || notes || "Train observation") +
-          (label && notes ? " · " + notes : "") +
-          '</small></div></div>';
-      }).join("");
+    const duration =
+      document.getElementById("travelMinutes");
+
+    if (departure) {
+      departure.value = toLocalDateTimeValue(new Date());
+
+      departure.addEventListener(
+        "change",
+        renderJourneyPrediction
+      );
     }
 
-    function escapeHtml(value) {
-      return String(value).replace(/[&<>"']/g, char => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;",
-        '"': "&quot;", "'": "&#039;"
-      })[char]);
+    if (duration) {
+      duration.addEventListener(
+        "input",
+        renderJourneyPrediction
+      );
     }
 
-    document.getElementById("addForm").addEventListener("submit", async function(event) {
-      event.preventDefault();
-      const token = getToken();
-      if (!token) {
-        document.getElementById("addStatus").textContent = "Connect to your Google Sheet first.";
-        return;
-      }
-
-      const time = document.getElementById("trainTime").value;
-      const label = document.getElementById("trainLabel").value.trim();
-      const notes = document.getElementById("trainNotes").value.trim();
-      const status = document.getElementById("addStatus");
-      status.textContent = "Submitting observation…";
-
-      try {
-        const body = new URLSearchParams({
-          action: "add",
-          token: token,
-          time: time,
-          label: label,
-          notes: notes
-        });
-
-        const response = await fetch(API_URL, {
-          method: "POST",
-          body: body
-        });
-
-        const result = await response.json();
-        if (!result.success) throw new Error(result.message || "The API did not accept the observation.");
-
-        status.textContent = "Observation added successfully.";
-        document.getElementById("addForm").reset();
-        await loadObservations();
-      } catch (error) {
-        status.textContent = "Could not confirm the save: " + error.message +
-          ". Check the Google Sheet before submitting again to avoid duplicates.";
-      }
-    });
-
-    document.getElementById("token").value = getToken();
-  </script>
-  <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js")
-      .then(() => console.log("App service worker registered"))
-      .catch(error => console.error("Service worker error:", error));
+    renderJourneyPrediction();
   });
-}
-  </script>
-</body>
-</html>
+
+  function getToken() {
+    return localStorage.getItem("sakhigopal_api_token") || "";
+  }
+
+  function setStatus(message, isError = false) {
+
+    const el = document.getElementById("status");
+
+    el.textContent = message;
+
+    el.style.color =
+      isError ? "#b42318" : "#526575";
+  }
+
+  function saveTokenAndLoad() {
+
+    const token =
+      document.getElementById("token").value.trim();
+
+    if (!token) {
+      setStatus("Please enter your API token.", true);
+      return;
+    }
+
+    localStorage.setItem("sakhigopal_api_token", token);
+
+    loadObservations();
+  }
+
+  // READ TRAIN PASSING TIME
+  function getTime(item) {
+
+    let value;
+
+    if (typeof item === "string") {
+      value = item;
+    } else {
+      value =
+        item.time ||
+        item.passingTime ||
+        item.trainTime ||
+        item.timestamp ||
+        "Time not available";
+    }
+
+    if (
+      typeof value === "string" &&
+      /^\d{4}-\d{2}-\d{2}T/.test(value)
+    ) {
+
+      const date = new Date(value);
+
+      if (!isNaN(date.getTime())) {
+
+        return new Intl.DateTimeFormat("en-GB", {
+          timeZone: "Asia/Kolkata",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false
+        }).format(date);
+      }
+    }
+
+    return String(value);
+  }
+
+  function getLabel(item) {
+    if (typeof item === "string") return "";
+
+    return item.label || item.train || item.name || "";
+  }
+
+  function getNotes(item) {
+    if (typeof item === "string") return "";
+
+    return item.notes || "";
+  }
+
+  function sortObservations(list) {
+
+    return [...list].sort((a, b) =>
+      String(getTime(a)).localeCompare(String(getTime(b)))
+    );
+  }
+
+  // LOAD GOOGLE SHEETS OBSERVATIONS
+  async function loadObservations() {
+
+    const token = getToken();
+
+    if (!token) {
+      setStatus("Please enter your API token first.", true);
+      return;
+    }
+
+    setStatus("Connecting to Google Sheets…");
+
+    try {
+
+      const url =
+        API_URL + "?action=list&token=" +
+        encodeURIComponent(token);
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error("Server returned HTTP " + response.status);
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(
+          data.message ||
+          "API rejected the request. Check your token."
+        );
+      }
+
+      observations =
+        sortObservations(data.observations || []);
+
+      renderObservations();
+      renderPrediction();
+      renderJourneyPrediction();
+
+      setStatus(
+        "Connected successfully. Data refreshed from Google Sheets."
+      );
+
+    } catch (error) {
+
+      setStatus(
+        "Connection failed: " + error.message +
+        ". If the browser reports a network/CORS error, we may need to adjust the Apps Script connection.",
+        true
+      );
+    }
+  }
+
+  // NEXT HISTORICAL TRAIN ESTIMATE
+  function renderPrediction() {
+
+    const timeElement =
+      document.getElementById("nextTrainTime");
+
+    const dayElement =
+      document.getElementById("nextTrainDay");
+
+    const messageElement =
+      document.getElementById("predictionMessage");
+
+    const countElement =
+      document.getElementById("busyWindowCount");
+
+    const times = observations
+      .map(item => getTime(item))
+      .map(value => {
+
+        const match =
+          String(value).match(/(\d{1,2}):(\d{2})/);
+
+        if (!match) return null;
+
+        const hour = Number(match[1]);
+        const minute = Number(match[2]);
+
+        if (hour > 23 || minute > 59) return null;
+
+        return hour * 60 + minute;
+
+      })
+      .filter(value => value !== null)
+      .sort((a, b) => a - b);
+
+    if (!times.length) {
+
+      timeElement.textContent = "No data";
+      dayElement.textContent = "Record train observations first";
+      messageElement.textContent = "No usable passing times found.";
+      countElement.textContent = "—";
+
+      return;
+    }
+
+    const now = new Date();
+
+    const currentMinutes =
+      now.getHours() * 60 + now.getMinutes();
+
+    
