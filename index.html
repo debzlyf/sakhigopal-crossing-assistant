@@ -1,0 +1,269 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b5d">
+  <title>Sakhigopal Crossing Assistant</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: #f2f5f8; color: #172b3a;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      background: #123b5d; color: white; padding: 22px 18px;
+    }
+    header h1 { margin: 0 0 6px; font-size: 22px; }
+    header p { margin: 0; color: #d7e6f2; font-size: 13px; }
+    main { max-width: 650px; margin: auto; padding: 16px; }
+    .card {
+      background: white; border-radius: 14px; padding: 17px;
+      margin-bottom: 15px; box-shadow: 0 2px 9px #102a430d;
+    }
+    h2 { font-size: 17px; margin: 0 0 13px; }
+    .stats { display: flex; gap: 12px; }
+    .stat {
+      flex: 1; background: #edf4f9; border-radius: 10px;
+      padding: 13px; min-width: 0;
+    }
+    .stat strong { display: block; font-size: 25px; color: #123b5d; }
+    .stat span { font-size: 12px; color: #526575; }
+    label { display: block; font-size: 13px; font-weight: bold; margin: 12px 0 6px; }
+    input {
+      width: 100%; padding: 12px; border: 1px solid #cbd5df;
+      border-radius: 8px; font-size: 16px; background: white;
+    }
+    button {
+      border: 0; border-radius: 9px; padding: 12px 16px;
+      font-size: 14px; font-weight: bold; cursor: pointer;
+    }
+    .primary { background: #1769aa; color: white; width: 100%; margin-top: 14px; }
+    .secondary { background: #e8f0f6; color: #123b5d; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .toolbar button { white-space: nowrap; }
+    .muted { color: #667887; font-size: 12px; line-height: 1.5; }
+    #status { margin-top: 10px; font-size: 13px; line-height: 1.5; }
+    .observation {
+      display: flex; justify-content: space-between; gap: 12px;
+      padding: 11px 0; border-bottom: 1px solid #edf0f2;
+    }
+    .observation:last-child { border-bottom: 0; }
+    .observation strong { color: #123b5d; }
+    .observation small { display: block; color: #667887; margin-top: 3px; }
+    .empty { color: #667887; font-size: 13px; padding: 12px 0; }
+    footer { text-align: center; color: #73818d; font-size: 11px; padding: 10px 15px 25px; }
+    .warning { background: #fff7e6; border-radius: 8px; padding: 10px; color: #76520a; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🚆 Sakhigopal Crossing Assistant</h1>
+    <p>Train observations and crossing-risk awareness</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="toolbar">
+        <h2>Crossing dashboard</h2>
+        <button class="secondary" onclick="loadObservations()">↻ Refresh</button>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <strong id="totalCount">—</strong>
+          <span>Observations loaded</span>
+        </div>
+        <div class="stat">
+          <strong id="latestTime">—</strong>
+          <span>Latest recorded time</span>
+        </div>
+      </div>
+      <div id="status" class="muted">Enter your API token below to connect.</div>
+    </section>
+
+    <section class="card">
+      <h2>Connect to your Google Sheet</h2>
+      <label for="token">Private API token</label>
+      <input id="token" type="password" placeholder="Paste your Apps Script API token">
+      <button class="primary" onclick="saveTokenAndLoad()">Save on this phone and connect</button>
+      <p class="muted">Your token is saved in this browser on this device. Do not put it in GitHub or share it with anyone.</p>
+    </section>
+
+    <section class="card">
+      <h2>➕ Add train observation</h2>
+      <form id="addForm">
+        <label for="trainTime">Train passing time</label>
+        <input id="trainTime" type="time" required>
+        <label for="trainLabel">Train / observation label (optional)</label>
+        <input id="trainLabel" type="text" placeholder="e.g. Vande Bharat, Engine">
+        <label for="trainNotes">Notes (optional)</label>
+        <input id="trainNotes" type="text" placeholder="Any useful details">
+        <button class="primary" type="submit">Add observation</button>
+      </form>
+      <div id="addStatus" class="muted"></div>
+    </section>
+
+    <section class="card">
+      <h2>Recent train observations</h2>
+      <div id="observations">
+        <div class="empty">Connect to your Google Sheet to load observations.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="warning">
+        <strong>Important:</strong> These are estimates based on recorded train passing times.
+        They do not show whether the railway gate is physically open or closed. Always check
+        the crossing and traffic before moving.
+      </div>
+    </section>
+  </main>
+
+  <footer>Sakhigopal Crossing Assistant · First version</footer>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbz7rP4IhhZ9FNqzT3FmzV6njJ6JKJ8-Xn6yiY8LGg6zSYi-us0hjTfC9LH0pOEPYraL/exec";
+
+    let observations = [];
+
+    function getToken() {
+      return localStorage.getItem("sakhigopal_api_token") || "";
+    }
+
+    function setStatus(message, isError = false) {
+      const el = document.getElementById("status");
+      el.textContent = message;
+      el.style.color = isError ? "#b42318" : "#526575";
+    }
+
+    function saveTokenAndLoad() {
+      const token = document.getElementById("token").value.trim();
+      if (!token) {
+        setStatus("Please enter your API token.", true);
+        return;
+      }
+      localStorage.setItem("sakhigopal_api_token", token);
+      loadObservations();
+    }
+
+    function getTime(item) {
+      if (typeof item === "string") return item;
+      return item.time || item.passingTime || item.trainTime || item.timestamp || "Time not available";
+    }
+
+    function getLabel(item) {
+      if (typeof item === "string") return "";
+      return item.label || item.train || item.name || "";
+    }
+
+    function getNotes(item) {
+      if (typeof item === "string") return "";
+      return item.notes || "";
+    }
+
+    function sortObservations(list) {
+      return [...list].sort((a, b) => String(getTime(a)).localeCompare(String(getTime(b))));
+    }
+
+    async function loadObservations() {
+      const token = getToken();
+      if (!token) {
+        setStatus("Please enter your API token first.", true);
+        return;
+      }
+
+      setStatus("Connecting to Google Sheets…");
+      try {
+        const url = API_URL + "?action=list&token=" + encodeURIComponent(token);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Server returned HTTP " + response.status);
+
+        const data = await response.json();
+        if (!data.success) throw new Error(data.message || "API rejected the request. Check your token.");
+
+        observations = sortObservations(data.observations || []);
+        renderObservations();
+        setStatus("Connected successfully. Data refreshed from Google Sheets.");
+      } catch (error) {
+        setStatus("Connection failed: " + error.message +
+          ". If the browser reports a network/CORS error, we may need to adjust the Apps Script connection.", true);
+      }
+    }
+
+    function renderObservations() {
+      document.getElementById("totalCount").textContent = observations.length;
+
+      const latest = observations.length
+        ? getTime(observations[observations.length - 1]).toString().slice(0, 5)
+        : "—";
+      document.getElementById("latestTime").textContent = latest;
+
+      const container = document.getElementById("observations");
+      if (!observations.length) {
+        container.innerHTML = '<div class="empty">No observations found.</div>';
+        return;
+      }
+
+      container.innerHTML = observations.slice().reverse().map(item => {
+        const time = escapeHtml(getTime(item));
+        const label = escapeHtml(getLabel(item));
+        const notes = escapeHtml(getNotes(item));
+        return '<div class="observation"><div><strong>' + time +
+          '</strong><small>' + (label || notes || "Train observation") +
+          (label && notes ? " · " + notes : "") +
+          '</small></div></div>';
+      }).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#039;"
+      })[char]);
+    }
+
+    document.getElementById("addForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      const token = getToken();
+      if (!token) {
+        document.getElementById("addStatus").textContent = "Connect to your Google Sheet first.";
+        return;
+      }
+
+      const time = document.getElementById("trainTime").value;
+      const label = document.getElementById("trainLabel").value.trim();
+      const notes = document.getElementById("trainNotes").value.trim();
+      const status = document.getElementById("addStatus");
+      status.textContent = "Submitting observation…";
+
+      try {
+        const body = new URLSearchParams({
+          action: "add",
+          token: token,
+          time: time,
+          label: label,
+          notes: notes
+        });
+
+        const response = await fetch(API_URL, {
+          method: "POST",
+          body: body
+        });
+
+        const result = await response.json();
+        if (!result.success) throw new Error(result.message || "The API did not accept the observation.");
+
+        status.textContent = "Observation added successfully.";
+        document.getElementById("addForm").reset();
+        await loadObservations();
+      } catch (error) {
+        status.textContent = "Could not confirm the save: " + error.message +
+          ". Check the Google Sheet before submitting again to avoid duplicates.";
+      }
+    });
+
+    document.getElementById("token").value = getToken();
+  </script>
+</body>
+</html>
