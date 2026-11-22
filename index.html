@@ -82,6 +82,25 @@
       </div>
       <div id="status" class="muted">Enter your API token below to connect.</div>
     </section>
+    
+<section class="card">
+  <h2>🚆 Next train estimate</h2>
+  <div class="stat">
+    <strong id="nextTrainTime">Calculating…</strong>
+    <span id="nextTrainDay">Based on historical observations</span>
+  </div>
+  <p id="predictionMessage" class="muted">
+    Analysing recorded train passing times…
+  </p>
+  <div class="stat">
+    <strong id="busyWindowCount">—</strong>
+    <span>Historical observations within 30 minutes of this time</span>
+  </div>
+  <p class="muted">
+    This is a historical reference, not a live train location or gate-status feed.
+  </p>
+</section>
+    
 
     <section class="card">
       <h2>Connect to your Google Sheet</h2>
@@ -211,6 +230,7 @@ function getTime(item) {
 
         observations = sortObservations(data.observations || []);
         renderObservations();
+        renderPrediction();
         setStatus("Connected successfully. Data refreshed from Google Sheets.");
       } catch (error) {
         setStatus("Connection failed: " + error.message +
@@ -218,6 +238,67 @@ function getTime(item) {
       }
     }
 
+function renderPrediction() {
+  const timeElement = document.getElementById("nextTrainTime");
+  const dayElement = document.getElementById("nextTrainDay");
+  const messageElement = document.getElementById("predictionMessage");
+  const countElement = document.getElementById("busyWindowCount");
+
+  const times = observations
+    .map(item => getTime(item))
+    .map(value => {
+      const match = String(value).match(/(\d{1,2}):(\d{2})/);
+      if (!match) return null;
+      const hour = Number(match[1]);
+      const minute = Number(match[2]);
+      if (hour > 23 || minute > 59) return null;
+      return hour * 60 + minute;
+    })
+    .filter(value => value !== null)
+    .sort((a, b) => a - b);
+
+  if (!times.length) {
+    timeElement.textContent = "No data";
+    dayElement.textContent = "Record train observations first";
+    messageElement.textContent = "No usable passing times found.";
+    countElement.textContent = "—";
+    return;
+  }
+
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const futureTimes = times.filter(time => time > currentMinutes);
+  const nextTime = futureTimes.length ? futureTimes[0] : times[0];
+  const isTomorrow = futureTimes.length === 0;
+
+  const hour = Math.floor(nextTime / 60);
+  const minute = nextTime % 60;
+  const formattedTime =
+    String(hour).padStart(2, "0") + ":" +
+    String(minute).padStart(2, "0");
+
+  const nearbyCount = times.filter(time => {
+    const difference = Math.abs(time - nextTime);
+    return difference <= 30;
+  }).length;
+
+  timeElement.textContent = formattedTime;
+  dayElement.textContent = isTomorrow
+    ? "Next historical match: tomorrow"
+    : "Next historical match: today";
+
+  countElement.textContent = nearbyCount;
+
+  if (nearbyCount >= 3) {
+    messageElement.textContent =
+      "Historically busy period: several observations fall within 30 minutes of this time. Allow extra time.";
+  } else {
+    messageElement.textContent =
+      "No dense historical cluster around this time in the available observations.";
+  }
+    }
+      
     function renderObservations() {
       document.getElementById("totalCount").textContent = observations.length;
 
