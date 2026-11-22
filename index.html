@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#123b5d">
   <title>Sakhigopal Crossing Assistant</title>
+  <link rel="manifest" href="./manifest.json">
   <style>
     * { box-sizing: border-box; }
     body {
@@ -264,6 +265,15 @@
     });
 
     document.getElementById("token").value = getToken();
+  </script>
+  <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(() => console.log("App service worker registered"))
+      .catch(error => console.error("Service worker error:", error));
+  });
+}
   </script>
 </body>
 </html>
